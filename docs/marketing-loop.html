@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Marketing Process Loop</title>
+<style>
+  body { margin: 0; padding: 24px 16px 40px; background: #141414; color: #e8e8e8;
+         font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; display: flex; flex-direction: column; align-items: center; }
+  h1 { font-size: 18px; font-weight: 500; margin: 0 0 4px; }
+  .sub { color: #8f8f8f; font-size: 12px; margin-bottom: 18px; text-align: center; }
+  svg { width: min(960px, 100%); height: auto; }
+  text { font-family: inherit; text-anchor: middle; fill: #e8e8e8; font-size: 15px; }
+  .box { fill: #141414; stroke: #e8e8e8; stroke-width: 1.5; }
+  .box.human { stroke: #c9a7ff; stroke-width: 2; }
+  .box.ext { stroke: #9a9a9a; stroke-dasharray: 5 4; }
+  text.human { fill: #c9a7ff; }
+  text.ext { fill: #bdbdbd; }
+  .m { fill: #bdbdbd; }
+  .note { fill: #8a8a8a; font-size: 12.5px; text-anchor: start; }
+  .lbl { font-size: 14px; }
+  .lbl.start { text-anchor: start; }
+  .lbl.end { text-anchor: end; }
+  .ln { fill: none; stroke: #e8e8e8; stroke-width: 1.5; }
+  .ln.human { stroke: #c9a7ff; }
+  .ln.ext { stroke: #9a9a9a; stroke-dasharray: 5 4; }
+  footer { color: #8a8a8a; font-size: 12px; max-width: 900px; margin-top: 18px; line-height: 1.6; }
+  footer b { color: #bdbdbd; font-weight: 500; }
+</style>
+</head>
+<body>
+<h1>marketing-process-loop</h1>
+<div class="sub">Tovil agent fleet · weekly content cycle · draft v0.1</div>
+
+<svg id="d" viewBox="0 0 960 1110" role="img" aria-label="Weekly marketing loop: research, strategy, creative, reviews, approval, publishing, results feeding next week">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#e8e8e8"/></marker>
+    <marker id="ah" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c9a7ff"/></marker>
+    <marker id="ae" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#9a9a9a"/></marker>
+  </defs>
+</svg>
+
+<footer>
+  <b>Model tiers are tentative:</b> opus = judgment (strategy, compliance, orchestration) · sonnet = writing &amp; review · haiku = cheap mechanical work.<br>
+  <b>Source:</b> agents and Gal's weekly approval from docs/high-level-marketing-agents.docx. The 4-reviewer gate and the 2-round cap are MAF's proposal, not in the spec yet.<br>
+  Leads from published content go to the separate always-on WhatsApp sales loop (not drawn here).
+</footer>
+
+<script>
+const svg = document.getElementById("d"), NS = "http://www.w3.org/2000/svg", B = {};
+function el(tag, attrs) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  svg.appendChild(e); return e;
+}
+function txt(x, y, s, cls = "") { el("text", { x, y, class: cls }).textContent = s; }
+function box(id, cx, y, w, l1, l2, cls = "") {
+  const h = 54; B[id] = { cx, y, w, h };
+  el("rect", { x: cx - w / 2, y, width: w, height: h, class: "box " + cls });
+  if (l2) { txt(cx, y + 23, l1, cls); txt(cx, y + 42, l2, "m " + cls); }
+  else txt(cx, y + 32, l1, cls);
+}
+function line(pts, arrow = true, cls = "") {
+  const a = { points: pts.map(p => p.join(",")).join(" "), class: "ln " + cls };
+  if (arrow) a["marker-end"] = cls === "human" ? "url(#ah)" : cls === "ext" ? "url(#ae)" : "url(#a)";
+  el("polyline", a);
+}
+const bot = id => [B[id].cx, B[id].y + B[id].h], topOf = id => [B[id].cx, B[id].y];
+const L = id => [B[id].cx - B[id].w / 2, B[id].y + B[id].h / 2], R = id => [B[id].cx + B[id].w / 2, B[id].y + B[id].h / 2];
+function down(a, b, cls) { line([bot(a), topOf(b)], true, cls); }
+function fanOut(a, ids, cls) {
+  const my = (bot(a)[1] + B[ids[0]].y) / 2, xs = ids.map(i => B[i].cx);
+  line([bot(a), [B[a].cx, my]], false, cls);
+  line([[Math.min(...xs), my], [Math.max(...xs), my]], false, cls);
+  ids.forEach(i => line([[B[i].cx, my], topOf(i)], true, cls));
+}
+function fanIn(ids, b) {
+  const my = (Math.max(...ids.map(i => bot(i)[1])) + B[b].y) / 2, xs = ids.map(i => B[i].cx);
+  ids.forEach(i => line([bot(i), [B[i].cx, my]], false));
+  line([[Math.min(...xs), my], [Math.max(...xs), my]], false);
+  line([[B[b].cx, my], topOf(b)]);
+}
+
+// ---------- nodes ----------
+box("trigger", 420, 20, 220, "weekly trigger", "cron · Sun 08:00");
+box("analytics", 220, 134, 180, "analytics", "sonnet");
+box("competitor", 420, 134, 180, "competitor-research", "haiku");
+box("stories", 620, 134, 180, "success-stories", "sonnet");
+box("strategy", 420, 238, 220, "strategy", "opus");
+box("creative", 420, 342, 260, "copywriter + visual", "sonnet + image/video API");
+box("r1", 135, 456, 170, "brand-voice", "sonnet");
+box("r2", 325, 456, 170, "hebrew-qa", "sonnet");
+box("r3", 515, 456, 170, "compliance", "opus");
+box("r4", 705, 456, 170, "platform-fit", "haiku");
+box("wait", 420, 570, 220, "WAIT FOR ALL", "4 reviews in");
+box("pm", 420, 684, 220, "project-manager", "opus");
+box("gal", 420, 798, 220, "Gal", "weekly approval", "human");
+box("organic", 300, 920, 200, "organic-distribution", "haiku");
+box("paid", 540, 920, 200, "paid-media", "sonnet");
+box("results", 420, 1034, 260, "live: 5 platforms + ads", "engagement · leads · CPA", "ext");
+box("sales", 770, 1034, 200, "leads → sales loop", "WhatsApp · 24/7", "ext");
+
+// ---------- edges ----------
+fanOut("trigger", ["analytics", "competitor", "stories"]);
+fanIn(["analytics", "competitor", "stories"], "strategy");
+down("strategy", "creative");
+fanOut("creative", ["r1", "r2", "r3", "r4"]);
+fanIn(["r1", "r2", "r3", "r4"], "wait");
+down("wait", "pm");
+txt(432, 660, "▼ all PASS", "lbl start");
+down("pm", "gal");
+fanOut("gal", ["organic", "paid"], "human");
+txt(408, 884, "APPROVE", "lbl end human");
+fanIn(["organic", "paid"], "results");
+line([R("results"), L("sales")], true, "ext");
+
+// review loop: any CHANGES -> back to creative
+const cR = R("creative")[0], cY = B.creative.y;
+line([R("wait"), [860, R("wait")[1]], [860, cY + 18], [cR, cY + 18]]);
+txt(550, 588, "any CHANGES:", "lbl start");
+txt(550, 618, "resume creative", "lbl start");
+txt(550, 636, "(max 2 rounds → Gal)", "lbl start");
+
+// Gal loop: NOTES -> fixes routed to creative
+line([R("gal"), [920, R("gal")[1]], [920, cY + 38], [cR, cY + 38]], true, "human");
+txt(550, 816, "NOTES:", "lbl start human");
+txt(550, 846, "PM routes fixes", "lbl start human");
+
+// outer loop: results feed next week's analytics
+const rY = R("results")[1];
+line([L("results"), [30, rY], [30, L("analytics")[1]], L("analytics")], true, "ext");
+el("text", { x: 22, y: 600, class: "lbl ext", transform: "rotate(-90 22 600)" }).textContent = "next week";
+
+// side notes
+txt(545, 270, "→ content angle", "note");
+txt(545, 716, "batches the whole week", "note");
+</script>
+</body>
+</html>
