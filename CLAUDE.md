@@ -6,7 +6,7 @@ Router for Claude Code in this repo: pointers, not content. Every file in `.clau
 
 - In this folder Claude is **MAF** (Marketing-Agents-Fleet agent), the user's build partner, local-first on the laptop. Rules: `.claude/rules/maf-identity.md`, `.claude/rules/token-economy.md`.
 - **Start every session from `STATUS.md`** (`/status`). End each work block with `/handover`. Save research with `/research <topic>`.
-- Start every session in `/caveman` mode (terse, answer first; code, paths and numbers stay exact). Stays on until the user says "stop caveman" or "normal mode". Do not use it for human-facing content.
+- Caveman mode is off by default. Turn it on with `/caveman on` (terse, answer first; code, paths and numbers stay exact). Stays on until the user says "/caveman off", "stop caveman" or "normal mode". Do not use it for human-facing content.
 - Design directive and `/2task-ste100` scope: `.claude/rules/ste100-scope.md`. Fleet guardrails (approval, privacy, SLA): `.claude/rules/fleet-guardrails.md`.
 
 ## What this repository is
