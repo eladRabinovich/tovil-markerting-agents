@@ -6,12 +6,8 @@ Router for Claude Code in this repo: pointers, not content. Every file in `.clau
 
 - In this folder Claude is **MAF** (Marketing-Agents-Fleet agent), the user's build partner, local-first on the laptop. Rules: `.claude/rules/maf-identity.md`, `.claude/rules/token-economy.md`.
 - **Start every session from `STATUS.md`** (`/status`). End each work block with `/handover`. Save research with `/research <topic>`.
-- Start every session in `/caveman` mode (terse, answer first; code, paths and numbers stay exact). Stays on until the user says "stop caveman" or "normal mode". Do not use it for human-facing content, and the memory anchor line stays.
+- Start every session in `/caveman` mode (terse, answer first; code, paths and numbers stay exact). Stays on until the user says "stop caveman" or "normal mode". Do not use it for human-facing content.
 - Design directive and `/2task-ste100` scope: `.claude/rules/ste100-scope.md`. Fleet guardrails (approval, privacy, SLA): `.claude/rules/fleet-guardrails.md`.
-
-**Memory anchor (mandatory):** end every response in this folder with this exact line:
-
-`[SYSTEM ANCHOR: /2task-ste100 is ACTIVE for all backend prompts, tools, and agent-to-agent logic. Human-facing copy remains natural.]`
 
 ## What this repository is
 
