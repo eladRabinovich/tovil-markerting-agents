@@ -1,6 +1,0 @@
-# agent outputs and downloaded filings — regenerate, don't commit
-reports/
-filings/
-*.xlsx
-.claude/settings.local.json
-.DS_Store

@@ -2,7 +2,7 @@
 
 Handover note. A fresh session starts here. Keep it short; update at the end of each work block.
 
-_Last updated: 2026-10-20_
+_Last updated: 2026-10-25_
 
 ## Phase
 
@@ -10,11 +10,11 @@ _Last updated: 2026-10-20_
 
 ## Done
 
-- `CLAUDE.md`: project router. The .docx is the authoritative spec; transcription errors "גיא" = Gal, "טובין" = Tovil.
-- Reviewed `gimini-notes-MF-project.md`. Keep its sprint skeleton (content brain → approval/publish → WhatsApp → ops), batch vs real-time split, local-first approach and self-hosted n8n. Outdated: models, WhatsApp pricing, AWS free tier, Midjourney API. Missing: about half the .docx agents.
-- `docs/fleet-diagram.html` v0.1: target-flow diagram, data-driven (edit `LANES`/`NODES`/`EDGES`). All agents marked `planned`.
-- `research/` folder created.
-- `docs/marketing-loop.html`: weekly content loop diagram (monospace style). The 4-reviewer gate is MAF's proposal.
+- 2026-10-25 repo restructure: `spec/` (inputs), `research/`, `design/`, `.claude/` (rules, commands `/status` `/handover` `/research`, helper agent `spec-checker`, hook `block-secrets.sh`, `settings.json`). `CLAUDE.md` is now a router. Unrelated `backup/` moved to `~/Playground/_backup/`.
+- `CLAUDE.md`: project router. The .docx (`spec/high-level-marketing-agents.docx`) is the authoritative spec; transcription errors "גיא" = Gal, "טובין" = Tovil.
+- Reviewed `research/gemini-infra-notes.md`. Keep its sprint skeleton (content brain → approval/publish → WhatsApp → ops), batch vs real-time split, local-first approach and self-hosted n8n. Outdated: models, WhatsApp pricing, AWS free tier, Midjourney API. Missing: about half the .docx agents.
+- `design/fleet-diagram.html` v0.1: target-flow diagram, data-driven (edit `LANES`/`NODES`/`EDGES`). All agents marked `planned`.
+- `design/marketing-loop.html`: weekly content loop diagram (monospace style). The 4-reviewer gate is MAF's proposal.
 - Deep research round 2 → `research/2026-10-20-costs-access-deep-research.md` (LLM/media/TTS prices, Meta/TikTok/YouTube access).
 - Deep research round 1 → `research/2026-10-19-infra-deep-research.md` (12 verified findings; big gaps listed under "Caveats").
 

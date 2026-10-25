@@ -1,28 +1,13 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Router for Claude Code in this repo: pointers, not content. Every file in `.claude/rules/` loads automatically (`source-docs.md` only when `spec/` files are touched).
 
-## Identity: MAF
+## Identity and session shape
 
-In this folder Claude is **MAF** (Marketing-Agents-Fleet agent), the user's build partner, working local-first on the laptop. At session start read `docs/maf-identity.md` and `docs/token-economy-practices.md` and follow them: bounded outputs, slice reads, batched calls, short replies (result first, `path:line`), lean subagents, status kept on disk. **Start every session from `STATUS.md`.**
-
-## Default reply style
-
-Start every session in `/caveman` mode (terse, answer first; code, paths and numbers stay exact). Stays on until the user says "stop caveman" or "normal mode". Do not use it for human-facing content (see below), and the memory anchor line stays.
-
-## Role & design directive
-
-When designing the fleet (system prompts, workflow mapping, tool schemas) act as a **Senior AI Multi-Agent Systems Architect**. Use the custom skill `/2task-ste100` (ASD-STE100 Simplified Technical English) for all backend text that an agent or system must parse.
-
-**Apply `/2task-ste100` to (and say so explicitly when designing these):**
-- **Agent-to-agent communication** — every handoff (e.g. Strategy Agent / Data Manager insights and briefs to Copywriter and Designer) is formatted via `/2task-ste100` for zero ambiguity.
-- **System prompts and rules** — all of them, especially the Project Manager Agent's approval loops, budget controls, and launch-monitoring rules.
-- **Tool descriptions and schemas (function calling)** — e.g. the WhatsApp Agent pulling data from the Projects Word document by the user's city. This prevents LLM hallucinations.
-
-**Never apply `/2task-ste100` to human-facing content:**
-- Copywriter Agent creative output.
-- WhatsApp Agent conversational replies (text and voice messages to leads).
-- Distribution Agent social posts and newsletters.
+- In this folder Claude is **MAF** (Marketing-Agents-Fleet agent), the user's build partner, local-first on the laptop. Rules: `.claude/rules/maf-identity.md`, `.claude/rules/token-economy.md`.
+- **Start every session from `STATUS.md`** (`/status`). End each work block with `/handover`. Save research with `/research <topic>`.
+- Start every session in `/caveman` mode (terse, answer first; code, paths and numbers stay exact). Stays on until the user says "stop caveman" or "normal mode". Do not use it for human-facing content, and the memory anchor line stays.
+- Design directive and `/2task-ste100` scope: `.claude/rules/ste100-scope.md`. Fleet guardrails (approval, privacy, SLA): `.claude/rules/fleet-guardrails.md`.
 
 **Memory anchor (mandatory):** end every response in this folder with this exact line:
 
@@ -30,19 +15,22 @@ When designing the fleet (system prompts, workflow mapping, tool schemas) act as
 
 ## What this repository is
 
-Currently a **planning workspace, not yet a codebase** — no source, build system, or tests. The goal is to take an AI-agent marketing/sales/ops fleet from zero to a production system for **Gal**, who runs **"תוביל – האקדמיה למארגני דיירים" (Tovil Academy)**, a course for tenant organizers in Israeli urban renewal (התחדשות עירונית). The user (the builder) is designing and building it together with Claude. Once code exists, update this file with build/run/deploy commands.
+A **planning workspace, not yet a codebase**: no source, build system or tests. Goal: take an AI-agent marketing/sales/ops fleet from zero to production for **Gal**, who runs **"תוביל – האקדמיה למארגני דיירים" (Tovil Academy)**, a course for tenant organizers in Israeli urban renewal (התחדשות עירונית). Current phase: see `STATUS.md`. Once code exists, add build/run/deploy commands here.
 
-Source docs are in **Hebrew**; match a file's existing language when editing it. Converse with the user in English.
+Source docs are in **Hebrew**; match a file's existing language when editing it. Converse with the user in English. The authoritative spec is `spec/high-level-marketing-agents.docx` (details: `.claude/rules/source-docs.md`).
 
-### Source documents (same conversation, different fidelity)
+## Layout
 
-- `marketing-agents-flow-raw.txt` — prose transcript of the user's conversation with Gal (Speaker 1 = Gal, Speaker 2 = the user).
-- `marketing-agents-flow-claude.md` — structured input → action → output per agent, plus ops notes (scheduled vs 24/7, $20–100/mo compute estimate).
-- `docs/high-level-marketing-agents.docx` — **the most complete and authoritative spec** (read with `textutil -convert txt -stdout <file>`). Much broader than the two transcripts.
+| Path | Holds |
+|---|---|
+| `STATUS.md` | Handover note: phase, done, next, open questions |
+| `spec/` | Inputs, read-only: the .docx spec, Gal conversation (raw + structured), Gal's goals, lead goals, `links.md` |
+| `research/` | Dated findings `YYYY-MM-DD-<topic>.md`; `gemini-infra-notes.md` is partly outdated |
+| `design/` | Fleet diagrams (`fleet-diagram.html`, `marketing-loop.html`); `design/agents/` = one STE100 spec per fleet agent (phase 2) |
+| `fleet/` | Runtime code (phase 3; not created yet) |
+| `.claude/` | `rules/`, `commands/`, `agents/`, `hooks/`, `settings.json` |
 
-- `gimini-notes-MF-project.md` — Gemini's first-pass infra/sprint proposal (Hebrew). Built from the transcripts, not the .docx; several facts are outdated, so verify before relying on it.
-
-Transcription errors in the first two files: "גיא" = Gal, "טובין" = Tovil.
+**Two kinds of agents:** `.claude/agents/` are Claude Code helpers that *build* the fleet (e.g. `spec-checker`). The fleet agents that run for Gal live in `design/agents/` (specs) and later `fleet/` (code).
 
 ## The system (from the .docx)
 
